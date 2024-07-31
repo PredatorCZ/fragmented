@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 3.16)
+
+set(CMAKE_CXX_STANDARD 20)
+
+project(HexaneToolset)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+
+option(CLI "" ON)
+option(GLTF "" ON)
+set(EXPOSE_SYMBOLS spike;pugixml;gltf)
+
+set(TPD_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd_party)
+
+add_subdirectory(${TPD_PATH}/spike)
+include(version)
+#toolset_version()
+
+set_target_properties(spike_cli PROPERTIES OUTPUT_NAME hexane_toolset)
+
+add_spike_subdir(ssg)
