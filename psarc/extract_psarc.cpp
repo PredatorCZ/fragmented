@@ -162,7 +162,7 @@ void StreamBlocksZlib(StreamCb cb, BinReaderRef rd, const TocEntry &entry,
 
   while (processedBytes < entry.uncompressedSize) {
     const uint32 blockSize = blocks.at(curBlock++);
-    if (!isCompressed) {
+    if (!isCompressed || blockSize < 9) {
       const uint32 realBlockSize = blockSize ? blockSize : blocksizeOut;
       rd.ReadContainer(tmpInbuffer, realBlockSize);
       cb(tmpInbuffer);
