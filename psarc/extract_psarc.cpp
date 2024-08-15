@@ -20,6 +20,7 @@
 #include "spike/app_context.hpp"
 #include "spike/except.hpp"
 #include "spike/io/binreader_stream.hpp"
+#include "spike/master_printer.hpp"
 #include "zlib.h"
 #include <cctype>
 #include <map>
@@ -189,7 +190,9 @@ void StreamBlocksZlib(StreamCb cb, BinReaderRef rd, const TocEntry &entry,
     inflateEnd(&infstream);
 
     if (state < 0) {
-      throw std::runtime_error(infstream.msg);
+      PrintError("Cannot uncompress stream at: ", entry.blockOffset + readBytes,
+                 " [", infstream.msg, ']');
+      return;
     }
 
     processedBytes += infstream.total_out;
