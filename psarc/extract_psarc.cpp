@@ -198,12 +198,7 @@ void StreamBlocksZlib(StreamCb cb, BinReaderRef rd, const TocEntry &entry,
     processedBytes += infstream.total_out;
     readBytes += tmpInbuffer.size();
 
-    if (processedBytes > entry.uncompressedSize) {
-      const uint32 diff = processedBytes - entry.uncompressedSize;
-      tmpOutBuffer.resize(tmpOutBuffer.size() - diff);
-    }
-
-    cb(tmpOutBuffer);
+    cb({tmpOutBuffer.data(), infstream.total_out});
   }
 }
 
