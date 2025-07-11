@@ -86,7 +86,7 @@ struct Header {
 
 template <> void FByteswapper(Header &item, bool) { FArraySwapper(item); }
 
-using StreamCb = std::function<void(const std::string &)>;
+using StreamCb = std::function<void(std::string_view)>;
 
 void StreamBlocksLzma(StreamCb cb, BinReaderRef rd, const TocEntry &entry,
                       const std::vector<uint32> &blocks, uint32 blocksizeOut) {
@@ -152,6 +152,7 @@ void StreamBlocksZlib(StreamCb cb, BinReaderRef rd, const TocEntry &entry,
                       const std::vector<uint32> &blocks, uint32 blocksizeOut) {
   std::string tmpInbuffer;
   std::string tmpOutBuffer;
+  tmpOutBuffer.resize(blocksizeOut);
   size_t curBlock = entry.blockOffset;
   size_t processedBytes = 0;
   size_t readBytes = 0;
@@ -191,7 +192,7 @@ void StreamBlocksZlib(StreamCb cb, BinReaderRef rd, const TocEntry &entry,
       throw std::runtime_error(infstream.msg);
     }
 
-    processedBytes += tmpOutBuffer.size();
+    processedBytes += infstream.total_out;
     readBytes += tmpInbuffer.size();
 
     if (processedBytes > entry.uncompressedSize) {
@@ -309,7 +310,7 @@ void AppProcessFile(AppContext *ctx) {
 
   std::stringstream files;
   {
-    StreamCb cb = [&](const std::string &data) {
+    StreamCb cb = [&files](std::string_view data) {
       files.write(data.data(), data.size());
     };
     streamer(cb, entries.front());
@@ -336,7 +337,7 @@ void AppProcessFile(AppContext *ctx) {
     const bool isRoot = fileBuffer[0] == '/';
     ectx->NewFile(fileBuffer + isRoot);
 
-    StreamCb cb = [&](const std::string &data) { ectx->SendData(data); };
+    StreamCb cb = [ectx](std::string_view data) { ectx->SendData(data); };
     streamer(cb, entries.at(i));
   }
 }
