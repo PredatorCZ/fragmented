@@ -20,6 +20,7 @@
 #include "spike/app_context.hpp"
 #include "spike/except.hpp"
 #include "spike/io/binreader_stream.hpp"
+#include "spike/master_printer.hpp"
 #include "zlib.h"
 #include <cctype>
 #include <map>
@@ -162,7 +163,7 @@ void StreamBlocksZlib(StreamCb cb, BinReaderRef rd, const TocEntry &entry,
 
   while (processedBytes < entry.uncompressedSize) {
     const uint32 blockSize = blocks.at(curBlock++);
-    if (!isCompressed) {
+    if (!isCompressed || blockSize < 9) {
       const uint32 realBlockSize = blockSize ? blockSize : blocksizeOut;
       rd.ReadContainer(tmpInbuffer, realBlockSize);
       cb(tmpInbuffer);
@@ -189,18 +190,15 @@ void StreamBlocksZlib(StreamCb cb, BinReaderRef rd, const TocEntry &entry,
     inflateEnd(&infstream);
 
     if (state < 0) {
-      throw std::runtime_error(infstream.msg);
+      PrintError("Cannot uncompress stream at: ", entry.blockOffset + readBytes,
+                 " [", infstream.msg, ']');
+      return;
     }
 
     processedBytes += infstream.total_out;
     readBytes += tmpInbuffer.size();
 
-    if (processedBytes > entry.uncompressedSize) {
-      const uint32 diff = processedBytes - entry.uncompressedSize;
-      tmpOutBuffer.resize(tmpOutBuffer.size() - diff);
-    }
-
-    cb(tmpOutBuffer);
+    cb({tmpOutBuffer.data(), infstream.total_out});
   }
 }
 
