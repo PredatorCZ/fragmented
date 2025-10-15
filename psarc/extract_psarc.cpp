@@ -190,7 +190,7 @@ void StreamBlocksZlib(StreamCb cb, BinReaderRef rd, const TocEntry &entry,
     inflateEnd(&infstream);
 
     if (state < 0) {
-      PrintError("Cannot uncompress stream at: ", entry.blockOffset + readBytes,
+      PrintError("Cannot uncompress stream at: ", entry.offset + readBytes,
                  " [", infstream.msg, ']');
       return;
     }
