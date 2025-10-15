@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<toolset_description># Fragmented
+
+Fragmented is a merge hell for spike modules that are too simple to have their own toolset project, or common modules across multiple projects.
+
+This project runs on Spike foundation.
+
+Head to this **[Wiki](https://github.com/PredatorCZ/Spike/wiki/Spike)** for more information on how to effectively use it.
+</toolset_description>
+
+<sai_to_gltf name="Trapt SAI to GLTF"></sai_to_gltf>
+
+<bst_to_gltf name="The Thing BST to GLTF">Convert BST+SGH+AN collections to GLTF</bst_to_gltf>
+
+<mh2_extract name="Extract Moorhuhn 2 WTN"></mh2_extract>
+
+<mh3_extract name="Extract Moorhuhn 3 DAT"></mh3_extract>
+
+<cpc_to_gltf name="Chaos Legion CPC/ITM to GLTF"></cpc_to_gltf>
+
+<extract_psarc name="Extract PSARC"></extract_psarc>
+
+<toolset_footer>## [Latest Release](https://github.com/PredatorCZ/Fragmented/releases)
+
+## License
+
+This toolset is available under GPL v3 license. (See LICENSE)\
+This toolset uses following libraries:
+
+- Spike, Copyright (c) 2016-2025 Lukas Cone (Apache 2)
+</toolset_footer>
